@@ -18,8 +18,6 @@ color:white;
 background:url("GABI.jpg") center/cover fixed;
 }
 
-/* tela inicial */
-
 #start{
 position:fixed;
 top:0;
@@ -44,8 +42,6 @@ color:white;
 cursor:pointer;
 }
 
-/* nome */
-
 .nome{
 font-size:55px;
 font-weight:bold;
@@ -61,14 +57,10 @@ animation:shine 3s linear infinite;
 100%{background-position:200%}
 }
 
-/* contador */
-
 #contador{
 font-size:26px;
 margin:20px;
 }
-
-/* mensagem */
 
 .mensagem{
 max-width:700px;
@@ -79,8 +71,6 @@ padding:20px;
 background:rgba(0,0,0,0.6);
 border-radius:15px;
 }
-
-/* galeria */
 
 .galeria{
 display:flex;
@@ -103,16 +93,12 @@ transition:0.4s;
 transform:scale(1.2);
 }
 
-/* video */
-
 video{
 width:80%;
 max-width:480px;
 border-radius:20px;
 margin-top:20px;
 }
-
-/* pétalas */
 
 .petala{
 position:fixed;
@@ -126,8 +112,6 @@ animation:cair 10s linear infinite;
 100%{transform:translateY(110vh)}
 }
 
-/* balões */
-
 .balao{
 position:fixed;
 bottom:-100px;
@@ -140,8 +124,6 @@ animation:subir 12s linear;
 0%{transform:translateY(0)}
 100%{transform:translateY(-120vh)}
 }
-
-/* comentários */
 
 .comentarios{
 max-width:600px;
@@ -181,8 +163,6 @@ border-radius:10px;
 
 <body>
 
-<!-- tela inicial -->
-
 <div id="start">
 
 <h1>Uma surpresa para você ❤</h1>
@@ -191,12 +171,8 @@ border-radius:10px;
 
 </div>
 
-<!-- música -->
-
 <audio id="musica" loop>
-
-<source src="GUSTTAVOLIMA.mp3" type="audio/mpeg">
-
+<source src="GUSTTAVOLIMA.mp3">
 </audio>
 
 <header>
@@ -215,15 +191,9 @@ Hoje é um dia muito especial.
 
 Celebramos não apenas mais um ano da sua vida, mas a pessoa incrível que você é.
 
-Seu sorriso ilumina meus dias e transforma momentos simples em memórias inesquecíveis.
+Seu sorriso ilumina meus dias.
 
-Que seus 30 anos sejam repletos de felicidade, amor, sonhos realizados e muitas conquistas.
-
-Que a vida continue te presenteando com tudo aquilo que você merece.
-
-Feliz aniversário meu amor.
-
-Eu te amo ❤
+Feliz aniversário meu amor ❤
 
 </div>
 
@@ -248,9 +218,7 @@ Eu te amo ❤
 <h2>Nosso vídeo</h2>
 
 <video id="video" controls>
-
-<source src="MOVIE.mp4" type="video/mp4">
-
+<source src="MOVIE.mp4">
 </video>
 
 <h2>Deixe uma mensagem para Gabriele</h2>
@@ -265,33 +233,57 @@ Eu te amo ❤
 
 <button onclick="comentar()">Enviar</button>
 
+<button onclick="modoAdmin()">Modo administrador</button>
+
 <div id="lista"></div>
 
 </div>
 
-<script>
+<script type="module">
 
-/* entrar */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-function entrar(){
+import {
+getFirestore,
+collection,
+addDoc,
+onSnapshot,
+deleteDoc,
+doc,
+serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+
+apiKey:"COLE_AQUI",
+authDomain:"COLE_AQUI",
+projectId:"COLE_AQUI",
+storageBucket:"COLE_AQUI",
+messagingSenderId:"COLE_AQUI",
+appId:"COLE_AQUI"
+
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const comentarios = collection(db,"mensagens");
+
+let admin=false
+let ultimoEnvio=0
+
+window.entrar=function(){
 
 document.getElementById("start").style.display="none"
-
 document.getElementById("musica").play()
 
 }
 
-/* parar musica no video */
-
-var video=document.getElementById("video")
-
-video.addEventListener("play",function(){
+document.getElementById("video").addEventListener("play",function(){
 
 document.getElementById("musica").pause()
 
 })
-
-/* contador */
 
 var data=new Date("Apr 28, 2026 00:00:00").getTime()
 
@@ -308,92 +300,104 @@ var horas=Math.floor((distancia%(1000*60*60*24))/(1000*60*60))
 var minutos=Math.floor((distancia%(1000*60*60))/(1000*60))
 
 document.getElementById("contador").innerHTML=
-
-"Faltam "+dias+" dias "+horas+"h "+minutos+"m para seus 30 anos ❤"
+"Faltam "+dias+" dias "+horas+"h "+minutos+"m"
 
 },1000)
 
-/* pétalas */
+window.comentar = async function(){
 
-setInterval(function(){
-
-var petala=document.createElement("div")
-
-petala.className="petala"
-
-petala.innerHTML="🌹"
-
-petala.style.left=Math.random()*100+"vw"
-
-document.body.appendChild(petala)
-
-setTimeout(()=>petala.remove(),10000)
-
-},600)
-
-/* balões */
-
-var mensagens=[
-
-"Você ilumina minha vida ❤",
-
-"Seu sorriso é meu lugar favorito",
-
-"Eu amo cada momento ao seu lado",
-
-"Você é o melhor presente da minha vida",
-
-"Feliz aniversário Gabriele",
-
-"Que sua vida seja cheia de felicidade"
-
-]
-
-setInterval(function(){
-
-var balao=document.createElement("div")
-
-balao.className="balao"
-
-balao.innerHTML="🎈"
-
-balao.style.left=Math.random()*100+"vw"
-
-balao.onclick=function(){
-
-var msg=mensagens[Math.floor(Math.random()*mensagens.length)]
-
-alert(msg)
-
-}
-
-document.body.appendChild(balao)
-
-setTimeout(()=>balao.remove(),12000)
-
-},4000)
-
-/* comentários */
-
-function comentar(){
-
-var nome=document.getElementById("nome").value
-
-var texto=document.getElementById("texto").value
+let nome=document.getElementById("nome").value.trim()
+let texto=document.getElementById("texto").value.trim()
 
 if(nome==""||texto=="") return
 
-var div=document.createElement("div")
+if(Date.now()-ultimoEnvio<5000){
 
-div.className="comentario"
+alert("Espere alguns segundos para enviar outra mensagem")
 
-div.innerHTML="<b>"+nome+"</b><br>"+texto+"<br><button onclick='this.parentElement.remove()'>Apagar</button>"
+return
 
-document.getElementById("lista").appendChild(div)
+}
+
+ultimoEnvio=Date.now()
+
+await addDoc(comentarios,{
+nome:nome,
+texto:texto,
+data:serverTimestamp()
+})
+
+animacao()
 
 document.getElementById("nome").value=""
-
 document.getElementById("texto").value=""
+
+}
+
+function animacao(){
+
+let aviso=document.createElement("div")
+
+aviso.innerText="Mensagem enviada ❤"
+
+aviso.style.position="fixed"
+aviso.style.bottom="30px"
+aviso.style.left="50%"
+aviso.style.transform="translateX(-50%)"
+aviso.style.background="#ff4d6d"
+aviso.style.padding="10px 20px"
+aviso.style.borderRadius="10px"
+
+document.body.appendChild(aviso)
+
+setTimeout(()=>aviso.remove(),2000)
+
+}
+
+window.modoAdmin=function(){
+
+let senha=prompt("Senha administrador")
+
+if(senha==="gabriele30"){
+
+admin=true
+alert("Modo administrador ativado")
+
+}
+
+}
+
+onSnapshot(comentarios,(snapshot)=>{
+
+let lista=document.getElementById("lista")
+lista.innerHTML=""
+
+snapshot.forEach(docSnap=>{
+
+let c=docSnap.data()
+
+let div=document.createElement("div")
+div.className="comentario"
+
+let botao=""
+
+if(admin){
+
+botao=`<br><button onclick="apagar('${docSnap.id}')">Apagar</button>`
+
+}
+
+div.innerHTML=`<b>${c.nome}</b><br>${c.texto}${botao}`
+
+lista.appendChild(div)
+
+})
+
+})
+
+window.apagar = async function(id){
+
+await deleteDoc(doc(db,"mensagens",id))
 
 }
 
